@@ -10,27 +10,36 @@ import moment from 'moment';
 export default class App extends Component {
 
   constructor(props) {
-    super(props)
+    super(props);
+
+    this.timer = 0;
 
     this.state = {
       active: false,
-      startDate: moment()
+      startDate: moment(),
+      timeRemaining: {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0
+      }
 
-    }
+    };
+    this.handleGenerate = this.handleGenerate.bind(this);
   }
   handleChange = function (date) {
-    console.log('APP JS HANDLE CHANGE', date._d);
+    console.log("APP JS HANDLE CHANGE", date._d);
     this.setState({
       startDate: date
     });
-  }.bind(this)
+  }.bind(this);
 
   handleGenerate = function () {
-    this.setState({ active: true })
+    this.setState({ active: true });
     //Set the date we are counting down to
     var countDownDate = this.state.startDate.toDate().getTime();
     //Update the count down every 1 second
-    var x = setInterval(function () {
+    this.timer = setInterval(function () {
       //Get todays and time
       var now = new Date().getTime();
 
@@ -45,16 +54,24 @@ export default class App extends Component {
 
       //output the result in an element with id="demo"
       const time = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
-      console.log(time)
+      const timeRemaining = {
+        days,
+        hours,
+        minutes,
+        seconds
+      };
+      this.setState({ timeRemaining });
+
+
       //If the count down is over, write some text
       if (distance < 0) {
-        clearInterval(x);
+        clearInterval(this.timer);
       }
 
 
 
-    }, 1000);
-  }.bind(this)
+    }.bind(this), 1000);
+  }.bind(this);
 
 
 
@@ -62,18 +79,22 @@ export default class App extends Component {
   renderItems = function () {
     if (this.state.active) {
       return [
-        <Clock />,
-        ChangeDate('Change Date', () => this.setState({ active: false })),
+        <Clock timeRemaining={this.state.timeRemaining} />,
+        ChangeDate("Change Date", () => this.setState({ active: false })),
         LargeText('04/03'),
         <label className="grid__remaining">Remaining until your 21st birthday</label>
-      ]
+      ];
     } else {
       return [
-        <Picker callback={(date) => this.handleChange(date)} />,
-        Button('Generate Countdown', () => this.handleGenerate())
-      ]
+        <Picker
+          startDate={this.state.startDate}
+          callback={date => this.handleChange(date)}
+        />,
+        Button("Generate Countdown", () => this.handleGenerate())
+      ];
+
     }
-  }.bind(this)
+  }.bind(this);
 
   render() {
     return (
