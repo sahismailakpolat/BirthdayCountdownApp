@@ -67,9 +67,10 @@ export default class App extends Component {
     }
 
     var countDownDate = bday.getTime();
+
     this.timer = setInterval(function () {
 
-      var now = today.getTime();
+      var now = moment().toDate.getTime();
       var distance = countDownDate - now;
 
       //Time calculations for days, hours, minutes and seconds
